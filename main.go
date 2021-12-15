@@ -30,6 +30,7 @@ func main() {
 	api := r.Group("/api/v1")
 
 	api.POST("/users", userHandler.RegisterUser)
+	api.POST("/session", userHandler.Login)
 	r.Run()
 
 }
