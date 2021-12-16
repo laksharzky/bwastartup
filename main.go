@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"bwastartup/auth"
 	"bwastartup/handler"
 	"bwastartup/user"
 
@@ -24,7 +25,9 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
-	userHandler := handler.NewUserHandler(userService)
+	authService := auth.NewService()
+
+	userHandler := handler.NewUserHandler(userService, authService)
 
 	r := gin.Default()
 	api := r.Group("/api/v1")
