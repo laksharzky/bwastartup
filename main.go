@@ -29,9 +29,11 @@ func main() {
 	r := gin.Default()
 	api := r.Group("/api/v1")
 
+	//routes
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/session", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
+	api.POST("/avatars", userHandler.UploadAvatar)
 	r.Run()
 
 }
