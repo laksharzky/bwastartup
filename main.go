@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"bwastartup/auth"
+	"bwastartup/campaign"
 	"bwastartup/handler"
 	"bwastartup/helper"
 	"bwastartup/user"
@@ -31,6 +32,24 @@ func main() {
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 	userHandler := handler.NewUserHandler(userService, authService)
+
+	campaignRepo := campaign.NewRepository(db)
+
+	campaigns, err := campaignRepo.FindUserByID(1)
+
+	fmt.Println("debug")
+	fmt.Println("debug")
+	fmt.Println("debug")
+	fmt.Println("Jumlah campaign: ", len(campaigns))
+	for _, campaign := range campaigns {
+		fmt.Println("Nama Campaign: ", campaign.Name)
+		if len(campaign.CampaignImages) > 0 {
+			fmt.Println("JUMLAH GAMBAR: ", len(campaign.CampaignImages))
+			fmt.Println("Gambar Campaign: ", campaign.CampaignImages[0].FileName)
+		}
+	}
+	// campaignService := campaign.NewService(campaignRepo)
+	// campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	r := gin.Default()
 	api := r.Group("/api/v1")
