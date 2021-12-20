@@ -34,21 +34,10 @@ func main() {
 	userHandler := handler.NewUserHandler(userService, authService)
 
 	campaignRepo := campaign.NewRepository(db)
+	campaignService := campaign.NewService(campaignRepo)
 
-	campaigns, err := campaignRepo.FindUserByID(1)
-
-	fmt.Println("debug")
-	fmt.Println("debug")
-	fmt.Println("debug")
-	fmt.Println("Jumlah campaign: ", len(campaigns))
-	for _, campaign := range campaigns {
-		fmt.Println("Nama Campaign: ", campaign.Name)
-		if len(campaign.CampaignImages) > 0 {
-			fmt.Println("JUMLAH GAMBAR: ", len(campaign.CampaignImages))
-			fmt.Println("Gambar Campaign: ", campaign.CampaignImages[0].FileName)
-		}
-	}
-	// campaignService := campaign.NewService(campaignRepo)
+	campaigns, err := campaignService.GetCampaigns(30)
+	fmt.Println("Total campaign: ", len(campaigns))
 	// campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	r := gin.Default()
