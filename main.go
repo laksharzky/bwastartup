@@ -35,10 +35,7 @@ func main() {
 
 	campaignRepo := campaign.NewRepository(db)
 	campaignService := campaign.NewService(campaignRepo)
-
-	campaigns, err := campaignService.GetCampaigns(30)
-	fmt.Println("Total campaign: ", len(campaigns))
-	// campaignHandler := handler.NewCampaignHandler(campaignService)
+	campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	r := gin.Default()
 	api := r.Group("/api/v1")
@@ -48,6 +45,7 @@ func main() {
 	api.POST("/session", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	r.Run()
 
 }
