@@ -1,6 +1,9 @@
 package campaign
 
-import "time"
+import (
+	"bwastartup/user"
+	"time"
+)
 
 type (
 	Campaign struct {
@@ -17,6 +20,7 @@ type (
 		CreatedAt        time.Time
 		UpdatedAt        time.Time
 		CampaignImages   []CampaignImage
+		User             user.User
 	}
 
 	CampaignImage struct {
