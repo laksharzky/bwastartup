@@ -26,15 +26,19 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	fmt.Println("Database Connected")
+	fmt.Println("--Database Connected--")
 
+	//repositories
 	userRepository := user.NewRepository(db)
+	campaignRepo := campaign.NewRepository(db)
+
+	//services
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
-	userHandler := handler.NewUserHandler(userService, authService)
-
-	campaignRepo := campaign.NewRepository(db)
 	campaignService := campaign.NewService(campaignRepo)
+
+	//handlers
+	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	r := gin.Default()
@@ -46,8 +50,10 @@ func main() {
 	api.POST("/session", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaignByID)
+	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 	r.Run()
 
 }
