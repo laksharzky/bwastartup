@@ -10,6 +10,7 @@ import (
 	"bwastartup/campaign"
 	"bwastartup/handler"
 	"bwastartup/helper"
+	"bwastartup/transaction"
 	"bwastartup/user"
 
 	"github.com/gin-gonic/gin"
@@ -31,15 +32,18 @@ func main() {
 	//repositories
 	userRepository := user.NewRepository(db)
 	campaignRepo := campaign.NewRepository(db)
+	transactionRepo := transaction.NewRepository(db)
 
 	//services
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 	campaignService := campaign.NewService(campaignRepo)
+	transactionService := transaction.NewService(transactionRepo, campaignRepo)
 
 	//handlers
 	userHandler := handler.NewUserHandler(userService, authService)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	r := gin.Default()
 	r.Static("/images", "./images")
@@ -56,6 +60,8 @@ func main() {
 	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 	api.PUT("/campaigns/:id", authMiddleware(authService, userService), campaignHandler.UpdateCampaign)
 	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
+
+	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions)
 	r.Run()
 
 }
