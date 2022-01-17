@@ -1,6 +1,8 @@
 package transaction
 
-import "time"
+import (
+	"time"
+)
 
 type TransactionFormatter struct {
 	ID        int       `json:"id"`
@@ -32,4 +34,56 @@ func FormatTransactions(transactions []Transaction) []TransactionFormatter {
 	}
 
 	return transactionsFormatter
+}
+
+type (
+	UserTransactionFormatter struct {
+		ID        int               `json:"id"`
+		Amount    int               `json:"amount"`
+		Status    string            `json:"status"`
+		CreatedAt time.Time         `json:"created_at"`
+		Campaign  CampaignFormatter `json:"campaign"`
+	}
+
+	CampaignFormatter struct {
+		Name     string `json:"name"`
+		ImageURL string `json:"image_url"`
+	}
+)
+
+func FormatUserTransaction(transaction Transaction) UserTransactionFormatter {
+	formatter := UserTransactionFormatter{
+		ID:        transaction.ID,
+		Amount:    transaction.Amount,
+		Status:    transaction.Status,
+		CreatedAt: transaction.CreatedAt,
+	}
+
+	campaign := CampaignFormatter{
+		Name:     transaction.Campaign.Name,
+		ImageURL: "",
+	}
+
+	if len(transaction.Campaign.CampaignImages) > 0 {
+		campaign.ImageURL = transaction.Campaign.CampaignImages[0].FileName
+	}
+
+	formatter.Campaign = campaign
+
+	return formatter
+}
+
+func FormatUserTransactions(transactions []Transaction) []UserTransactionFormatter {
+	if len(transactions) == 0 {
+		return []UserTransactionFormatter{}
+	}
+
+	userFormatter := []UserTransactionFormatter{}
+
+	for _, transaction := range transactions {
+		formatter := FormatUserTransaction(transaction)
+		userFormatter = append(userFormatter, formatter)
+	}
+
+	return userFormatter
 }

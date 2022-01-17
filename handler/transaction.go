@@ -42,8 +42,22 @@ func (h *transactionHandler) GetCampaignTransactions(c *gin.Context) {
 
 }
 
-//parameter di uri
-//tangkap parameter mapping input struct
-//panggil service, input struct sebagai parameter
-//service, berbekal campaign id bisa panggil repo
-//repo mencari data transaction suatu campaign
+func (h *transactionHandler) GetUserTransaction(c *gin.Context) {
+	currentUser := c.MustGet("currentUser").(user.User)
+	userID := currentUser.ID
+
+	transactions, err := h.service.GetTransactionByUserID(userID)
+	if err != nil {
+		response := helper.APIResponse("Failed to get users's transactions", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	response := helper.APIResponse("Users's transactions", http.StatusOK, "success", transaction.FormatUserTransactions(transactions))
+	c.JSON(http.StatusOK, response)
+}
+
+//get user transaction
+//handler
+//ambil nilai dari jwt middleware
+//service
+//repo
