@@ -14,6 +14,7 @@ import (
 	"bwastartup/transaction"
 	"bwastartup/user"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"gorm.io/driver/mysql"
@@ -48,6 +49,7 @@ func main() {
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	r := gin.Default()
+	r.Use(cors.Default())
 	r.Static("/images", "./images")
 	api := r.Group("/api/v1")
 
@@ -56,6 +58,7 @@ func main() {
 	api.POST("/session", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+	api.GET("/users/fetch", authMiddleware(authService, userService), userHandler.FetchUser)
 
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaignByID)
